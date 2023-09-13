@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "summarykeywords"
+version = "0.1.0"
+description = "take pdf from user and find summary and keywords from the pdf"
+authors = ["sayalee damle <sayalee.damle@onepointltd.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+openai = "^0.28.0"
+langchain = "^0.0.287"
+python-dotenv = "^1.0.0"
+"pdfminer.six" = "^20221105"
+unstructured = "^0.10.14"
+pdf2image = "^1.16.3"
+pypdf = "^3.16.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
