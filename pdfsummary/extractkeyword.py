@@ -17,7 +17,8 @@ class CommaSeparatedListOutputParser(BaseOutputParser):
         return text.strip().split(", ")
     
 template = """You display keywords and a summary.
-A user will pass in a pdf file, you should generate keywords and a summary from it with labels 'Keywords: ' and 'Summary: ' on two different lines.
+A user will pass in a pdf file, you should generate 5 keywords and a summary from it. It should be labelled 'Keywords: ' and 'Summary: ' on two different lines.
+The summary will contain an appropriate title.
 """
 
 system_message_prompt = SystemMessagePromptTemplate.from_template(template)

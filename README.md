@@ -1,6 +1,5 @@
 # Description
-explains the functionality of a function in a code
-use Custom Template Prompt
+PDF is taken and a summary with keyowrds are found
 
 # Packages used
 1. openai
