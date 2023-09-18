@@ -12,6 +12,8 @@ PDF is taken and a summary with keyowrds are found
 2. pip install python-dotenv
 3. pip install openai
 4. pip install langchain
+5. pip install tiktoken
+6. pip install chromadb
 
 ## Steps to create project
 1. conda create -n convert_list python=3.11
