@@ -37,8 +37,12 @@ chain = LLMChain(llm = Config.llm, prompt = chat_prompt)
 loader = UnstructuredPDFLoader(r"C:/Users/Sayalee/Documents/samplepdf1.pdf")
 pages = loader.load()
 
-
-print(chain.run({'text': pages[0], 'language': 'english'}))
+l = ""
+l = input("Enter a Language if translation is required else press enter: ")
+if l.lower is not "":
+    print(chain.run({'text': pages[0], 'language': l}))
+else:
+    print(chain.run({'text': pages[0], 'language': 'english'}))
 #print(pages[0].page_content)
 
 template2 = """ You will give a relevent answer from the {output} for the {question} in the format:
