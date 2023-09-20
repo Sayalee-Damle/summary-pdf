@@ -39,7 +39,7 @@ pages = loader.load()
 
 l = ""
 l = input("Enter a Language if translation is required else press enter: ")
-if l.lower != "":
+if l != "":
     print(chain.run({'text': pages[0], 'language': l}))
 else:
     print(chain.run({'text': pages[0], 'language': 'english'}))
