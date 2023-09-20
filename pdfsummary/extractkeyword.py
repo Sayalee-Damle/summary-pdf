@@ -45,6 +45,8 @@ else:
     print(chain.run({'text': pages[0], 'language': 'english'}))
 #print(pages[0].page_content)
 
+system_template = """You will be a chatbot"""
+
 template2 = """ You will give a relevent answer from the {output} for the {question} in the format:
 Question : "what is the color of an apple?"
 Answer : "Red"
@@ -53,8 +55,9 @@ Question : "who started Tesla?"
 Answer : "Elon Musk"
 
 """
-system_message_prompt_2 = SystemMessagePromptTemplate.from_template(template2)
-chat_prompt_2 = ChatPromptTemplate.from_messages([system_message_prompt_2])
+system_message_prompt_2 = SystemMessagePromptTemplate.from_template(system_template)
+human_message_prompt_2 = HumanMessagePromptTemplate.from_template(template2)
+chat_prompt_2 = ChatPromptTemplate.from_messages([system_template, human_message_prompt_2])
 text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
 documents = text_splitter.split_documents(pages)
 emb_func = OpenAIEmbeddings()
@@ -64,7 +67,7 @@ db.persist()
 f = True
 while f == True:
     c = input("Do you have any questions? (Y/N): ")
-    print(c.lower)
+    #print(c.lower)
     if c in ("Y", "y"):
         query = input("Enter question: ")
         docs = db.similarity_search(query)
