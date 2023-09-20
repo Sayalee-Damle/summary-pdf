@@ -39,7 +39,7 @@ pages = loader.load()
 
 l = ""
 l = input("Enter a Language if translation is required else press enter: ")
-if l.lower is not "":
+if l.lower != "":
     print(chain.run({'text': pages[0], 'language': l}))
 else:
     print(chain.run({'text': pages[0], 'language': 'english'}))
@@ -55,15 +55,18 @@ Answer : "Elon Musk"
 """
 system_message_prompt_2 = SystemMessagePromptTemplate.from_template(template2)
 chat_prompt_2 = ChatPromptTemplate.from_messages([system_message_prompt_2])
+text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
+documents = text_splitter.split_documents(pages)
+emb_func = OpenAIEmbeddings()
+db = Chroma.from_documents(documents, emb_func, persist_directory = "./chromadb")
+db.persist()
 
 f = True
 while f == True:
     c = input("Do you have any questions? (Y/N): ")
-    if (c== "Y") or (c == "y"):
+    print(c.lower)
+    if c in ("Y", "y"):
         query = input("Enter question: ")
-        text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
-        documents = text_splitter.split_documents(pages)
-        db = Chroma.from_documents(documents, OpenAIEmbeddings())
         docs = db.similarity_search(query)
         chain2 = LLMChain(llm = Config.llm, prompt = chat_prompt_2)
         print(chain2.run({"output": docs[0], "question": query}))
