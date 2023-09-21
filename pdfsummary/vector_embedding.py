@@ -23,6 +23,7 @@ from pathlib import Path
 def check_embedding_dir():
     file_path = Path(__file__)
     client = chromadb.Client()
+    #client.list_collections()
     collection = Path(file_path).parent.name
     c = client.get_or_create_collection(name = collection)
     return c    
