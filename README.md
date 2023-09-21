@@ -1,10 +1,14 @@
 # Description
-PDF is taken and a summary with keyowrds are found
+User interactive PDF reader. 
+You will get a summary and keywords out of the PDF that you put in.
+After you get the summary, you will get a chance to sk questions related to the PDF topic and get a relevant answer for it.
+Vector Embedding methods are used
 
 # Packages used
 1. openai
 2. langchain
 3. python-dotenv
+4. chromaDB
 
 # Create project
 ## Installations prerequisites
