@@ -15,27 +15,34 @@ from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.vectorstores import Chroma
 import chromadb
+from pathlib import Path
 
 
 
-#check if embedding dir exists
-def check_embedding_dir(collection):
+#check if embedding dir exists else create
+def check_embedding_dir():
+    file_path = Path(__file__)
     client = chromadb.Client()
-    try:
-        c = client.get_collection(collection)
-        if len(c) > 0:
-            return True
-        else:
-            return False
-    except:
-        return False
+    collection = Path(file_path).parent.name
+    c = client.get_or_create_collection(name = collection)
+    return c    
 
-        
-
-
+# if embedding dir is empty
 def text_splitter(doc_to_split):
     text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
     documents = text_splitter.split_documents(doc_to_split)
+    return documents
+
+def apply_embedding_func(documents):
     emb_func = OpenAIEmbeddings()
     db = Chroma.from_documents(documents, emb_func, persist_directory = "./chromadb")
-    db.persist()
+    return db
+
+#check if embedding dir is empty
+def check_empty(collection):
+    if collection.count() == 0:
+        return True
+    else:
+        return False
+    
+

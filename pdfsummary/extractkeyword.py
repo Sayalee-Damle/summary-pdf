@@ -14,7 +14,7 @@ from langchain.document_loaders import TextLoader
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.vectorstores import Chroma
-
+import vector_embedding as ve
 
 class CommaSeparatedListOutputParser(BaseOutputParser):
     def parse(self, text: str):
@@ -58,7 +58,8 @@ Answer : "Elon Musk"
 system_message_prompt_2 = SystemMessagePromptTemplate.from_template(system_template)
 human_message_prompt_2 = HumanMessagePromptTemplate.from_template(template2)
 chat_prompt_2 = ChatPromptTemplate.from_messages([system_template, human_message_prompt_2])
-text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
+
+"""text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
 documents = text_splitter.split_documents(pages)
 emb_func = OpenAIEmbeddings()
 db = Chroma.from_documents(documents, emb_func, persist_directory = "./chromadb")
@@ -77,4 +78,32 @@ while f == True:
     else:
         print("Thanks!")
         f = False
+        break"""
+
+#check if embedding dir is created else we create the collection
+collection = ve.check_embedding_dir()
+
+#check if embedding dir is empty
+collection_is_empty = ve.check_empty(collection)
+if collection_is_empty:
+    documents = ve.text_splitter(pages)
+
+db = ve.apply_embedding_func(documents)
+db.persist()
+
+f = True
+while f == True:
+    c = input("Do you have any questions? (Y/N): ")
+    #print(c.lower)
+    if c in ("Y", "y"):
+        query = input("Enter question: ")
+        docs = db.similarity_search(query)
+        chain2 = LLMChain(llm = Config.llm, prompt = chat_prompt_2)
+        print(chain2.run({"output": docs[0], "question": query}))
+
+    else:
+        print("Thanks!")
+        f = False
         break
+
+
