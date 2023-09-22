@@ -17,7 +17,7 @@ Vector Embedding methods are used
 3. pip install openai
 4. pip install langchain
 5. pip install tiktoken
-6. pip install chromadb
+6. pip install faiss-cpu
 
 ## Steps to create project
 1. conda create -n convert_list python=3.11
