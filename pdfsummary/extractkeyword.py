@@ -58,10 +58,10 @@ collection = ve.check_embedding_dir()
 collection_is_empty = ve.check_empty(collection)
 if collection_is_empty:
     documents = ve.text_splitter(pages)
-
-db = ve.apply_embedding_func(documents)
-db.persist()
-
+    db = ve.apply_embedding_func(documents)
+    db.persist()
+else:
+    db = collection.get()
 
 f = True
 while f == True:
