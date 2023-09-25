@@ -3,7 +3,7 @@ import os
 from langchain.chat_models import ChatOpenAI
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.vectorstores import FAISS
-from pathlib import Path
+from pathlib import Path,PurePath
 
 load_dotenv()
 
@@ -16,8 +16,9 @@ class Config:
         # cache=has_langchain_cache,
         streaming=True,
     )
-    #path_vector_store = Path(__file__)
+    path_embedding_dir = Path("./__pycache/vector_embedding.cpython-311.pyc")
     # used to create embeddings
+    
     def apply_embedding_func(documents):
         emb_func = OpenAIEmbeddings()
         db = FAISS.from_documents(documents, emb_func)
@@ -27,3 +28,4 @@ cfg = Config()
 
 if __name__ == "__main__":
     print("llm: ", cfg.llm)
+    print("v embedding path: ", cfg.path_embedding_dir)
