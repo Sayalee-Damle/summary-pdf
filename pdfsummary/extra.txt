@@ -1,0 +1,34 @@
+"""
+with st.chat_message("assistant"):
+    pdf_translate = st.write(placeholder= "Do you want to translate the summary?")
+with st.chat_message("user"):
+    ans = st.write(placeholder= "Yes or No?")
+if pdf_translate:
+    st.write(pdf_translate)
+    if str(pdf_translate).lower() == 'yes':
+        lang = st.chat_input(placeholder= "Which language?")
+
+    if lang:
+        with st.spinner("Generating response"):
+            st.write(lang)
+            translation = ek.translation(summary, lang)
+            with st.chat_message("assistant"):
+                st.write(translation)
+            #display translation
+
+questions = st.chat_input(placeholder= "Do you have any questions related to this?")
+if str(questions) == 'yes':
+    query =st.chat_input(placeholder= "Question")
+    db = ek.check_embd_dir(read_pdf)"""
+
+
+
+if y.lower() == "Yes":
+        with st.chat_message("assistant"):
+            st.write("Which language?")
+        lang = st.chat_input("Which language?")
+        st.markdown(lang)
+        translation = ek.translation(summary, lang)
+        # Display assistant response in chat message container
+        with st.chat_message("assistant"):
+            st.markdown(translation)

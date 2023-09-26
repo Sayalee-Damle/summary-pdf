@@ -4,38 +4,47 @@ from langchain.document_loaders import UnstructuredPDFLoader
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.vectorstores import  FAISS
-
+from pathlib import Path
 import user_input as ui
-from config import Config
+from config import cfg
+from typing import Tuple, List
+from langchain.schema import Document
+import pickle
 
 # if embedding dir is empty
-def text_splitter(doc_to_split):
-    text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
+def create_vector_store(doc_to_split) -> FAISS:
+    text_splitter = CharacterTextSplitter(chunk_size=cfg.split_size, chunk_overlap=0)
     documents = text_splitter.split_documents(doc_to_split)
-    db = Config.apply_embedding_func(documents)
+    db = FAISS.from_documents(documents, cfg.emb_func)
     return db
 
 
-#check if embedding dir is empty
-def check_empty(collection):
-    if collection.count() == 0:
-        return True
-    else:
-        return False
-    
-
 #check if embedding dir exists else create
-def init_vector_store():
-    file_path = Config.path_embedding_dir
-    emb_func = OpenAIEmbeddings()
+def init_vector_store(path_pdf: Path) -> Tuple[FAISS, List[Document]]:
+    
+    file_path = cfg.path_embedding_dir/path_pdf.stem    #create a folder below path_embedding_dir
+    documents_path = cfg.path_embedding_dir/f"{path_pdf.stem}_document"
     if file_path.exists() and len(list(file_path.glob("*"))) > 0:
-        return FAISS.load_local(file_path.as_posix(), emb_func)
+        db = FAISS.load_local(file_path.as_posix(), cfg.emb_func)
+        with open(documents_path, 'rb') as f:
+            documents = pickle.load(f)
+            return db, documents
     else:
-        return False
-        path_pdf = ui.get_path_pdf()
         loader = UnstructuredPDFLoader(path_pdf)
         pages = loader.load()
-        documents = text_splitter(pages)
-        vector_store = apply_embedding_func(documents)
-        vector_store.save_local(file_path)
-        return vector_store
+        db = create_vector_store(pages)
+        with open(documents_path, 'wb') as f:
+            pickle.dump(pages, f)
+        if not file_path.exists():
+            file_path.mkdir(parents = True)
+        db.save_local(file_path.as_posix())
+        return db, pages
+
+if __name__ == "__main__":
+    path_pdf = Path("C:/Users/Sayalee/Documents/samplepdf2.pdf")
+    faiss, documents = init_vector_store(path_pdf) 
+    assert faiss is not None
+    assert documents is not None
+    assert len(documents) > 0
+    print(faiss)
+    

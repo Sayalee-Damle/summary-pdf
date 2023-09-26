@@ -19,6 +19,7 @@ Vector Embedding methods are used
 5. pip install tiktoken
 6. pip install faiss-cpu
 7. pip install prompt-toolkit
+8. pip install streamlit-chat
 
 ## Steps to create project
 1. conda create -n convert_list python=3.11

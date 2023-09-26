@@ -16,13 +16,14 @@ class Config:
         # cache=has_langchain_cache,
         streaming=True,
     )
-    path_embedding_dir = Path("./__pycache/vector_embedding.cpython-311.pyc")
+    path_embedding_dir = Path(os.getenv("EMBEDDING_DIR"))
     # used to create embeddings
     
-    def apply_embedding_func(documents):
-        emb_func = OpenAIEmbeddings()
-        db = FAISS.from_documents(documents, emb_func)
-        return db
+    if not path_embedding_dir.exists():
+        path_embedding_dir.mkdir(exist_ok=True, parents=True)
+
+    emb_func = OpenAIEmbeddings()
+    split_size = int(os.getenv("CHUNK_SIZE"))
 
 cfg = Config()
 
