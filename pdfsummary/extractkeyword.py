@@ -20,9 +20,10 @@ class CommaSeparatedListOutputParser(BaseOutputParser):
         
 
 
-
-path_pdf = user_input.get_path_pdf()
-db, pages = ve.init_vector_store(path_pdf)
+def get_db_pages(path_pdf):
+    #path_pdf = user_input.get_path_pdf()
+    db, pages = ve.init_vector_store(path_pdf)
+    return db, pages
     
 #to find summary
 def summary_llm(pages):

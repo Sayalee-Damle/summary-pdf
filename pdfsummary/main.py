@@ -23,9 +23,11 @@ def use_prompt():
 
 
 st.header("Read your PDF and Get it Summarized! Also ask questions and get the Summary Translated if you want!")
-path_pdf = "Enter your pdf file path "
-with st.chat_message("assistant"):
-    st.write(path_pdf)
+
+pdf_path = "Enter your pdf file path "
+
+with st.chat_message("assistant"): 
+    st.write(pdf_path)
 
 if prompt:= st.chat_input("Type here"):
     with st.chat_message("user"):

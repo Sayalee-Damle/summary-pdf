@@ -21,7 +21,6 @@ def create_vector_store(doc_to_split) -> FAISS:
 
 #check if embedding dir exists else create
 def init_vector_store(path_pdf: Path) -> Tuple[FAISS, List[Document]]:
-    
     file_path = cfg.path_embedding_dir/path_pdf.stem    #create a folder below path_embedding_dir
     documents_path = cfg.path_embedding_dir/f"{path_pdf.stem}_document"
     if file_path.exists() and len(list(file_path.glob("*"))) > 0:
