@@ -12,15 +12,15 @@ from langchain.schema import Document
 import pickle
 
 # if embedding dir is empty
-def create_vector_store(doc_to_split) -> FAISS:
-    text_splitter = CharacterTextSplitter(chunk_size=cfg.split_size, chunk_overlap=0)
+async def create_vector_store(doc_to_split) -> FAISS:
+    text_splitter = CharacterTextSplitter(chunk_size=cfg.split_size, chunk_overlap=10)
     documents = text_splitter.split_documents(doc_to_split)
     db = FAISS.from_documents(documents, cfg.emb_func)
     return db
 
 
 #check if embedding dir exists else create
-def init_vector_store(path_pdf: Path) -> Tuple[FAISS, List[Document]]:
+async def init_vector_store(path_pdf: Path) -> Tuple[FAISS, List[Document]]:
     file_path = cfg.path_embedding_dir/path_pdf.stem    #create a folder below path_embedding_dir
     documents_path = cfg.path_embedding_dir/f"{path_pdf.stem}_document"
     if file_path.exists() and len(list(file_path.glob("*"))) > 0:

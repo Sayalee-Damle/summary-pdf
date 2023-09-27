@@ -26,7 +26,7 @@ def get_db_pages(path_pdf):
     return db, pages
     
 #to find summary
-def summary_llm(pages):
+async def summary_llm(pages):
     system_message_prompt = SystemMessagePromptTemplate.from_template(t.summary_template)
     human_template = "{text}"
     human_message_prompt = HumanMessagePromptTemplate.from_template(human_template)
@@ -34,26 +34,27 @@ def summary_llm(pages):
     chat_prompt = ChatPromptTemplate.from_messages([system_message_prompt, human_message_prompt])
 
     chain = LLMChain(llm = Config.llm, prompt = chat_prompt)
-    summary = chain.run({'text': pages})
+    summary = await chain.arun({'text': pages})
     return summary
 
-def translation(summary, language):
+async def translation(summary, language):
     system_message_prompt_3 = SystemMessagePromptTemplate.from_template(t.system_translate_template)
     human_message_prompt_3 = HumanMessagePromptTemplate.from_template(t.translate_template)
     chat_prompt_3 = ChatPromptTemplate.from_messages([system_message_prompt_3, human_message_prompt_3])
     chain3 = LLMChain(llm = Config.llm, prompt = chat_prompt_3)
-    return chain3.run({'text': summary, 'language': language})
+    translate =await chain3.arun({'summary': summary, 'language': language})
+    return translate
    
 #print(pages[0].page_content)
 
 #template for question answer
-def question_llm(query, db):
+async def question_llm(query, db):
     system_message_prompt_2 = SystemMessagePromptTemplate.from_template(t.system_template)
     human_message_prompt_2 = HumanMessagePromptTemplate.from_template(t.template2)
     chat_prompt_2 = ChatPromptTemplate.from_messages([system_message_prompt_2, human_message_prompt_2])
     docs = db.similarity_search(query)
     chain2 = LLMChain(llm = Config.llm, prompt = chat_prompt_2)
-    ans = chain2.run({"output": docs[0], "question": query})
+    ans =await chain2.arun({"output": docs[0], "question": query})
     return ans
 
 

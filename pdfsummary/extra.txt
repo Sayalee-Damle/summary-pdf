@@ -32,3 +32,38 @@ if y.lower() == "Yes":
         # Display assistant response in chat message container
         with st.chat_message("assistant"):
             st.markdown(translation)
+
+
+if prompt:= st.chat_input("Type here"):
+    with st.chat_message("user"):
+        st.write(prompt)
+    st.session_state.messages.append({"role": "user", "content": prompt})
+    with st.spinner("Generating response"):
+        db, pages = ve.init_vector_store(Path(prompt))
+        summary = 'summary' #ek.summary_llm(pages)
+        with st.chat_message("assistant"):
+            st.write(summary)
+        st.session_state.messages.append({"role": "assistant", "content": summary})
+        #display summary
+    translate = "Do you want to translate the summary (Yes/No)?"
+    with st.chat_message("assistant"):
+        st.markdown(translate)
+    
+    with st.chat_message("user"):
+        st.write()
+        st.session_state.messages.append({"role": "user", "content": prompt})
+
+    if prompt.lower() == "yes":
+        lang = "Which language?"
+        with st.chat_message("assistant"):
+            st.markdown(lang)
+        #prompt = None
+        with st.chat_message("user"):
+            st.write(prompt)
+        
+    # Add user message to chat history
+    #st.session_state.messages.append({"role": "user", "content": prompt})
+    
+        # Add assistant response to chat history
+        #st.session_state.messages.append({"role": "assistant", "content": response})
+

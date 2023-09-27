@@ -5,8 +5,8 @@ The summary will contain an appropriate title.
 
 system_translate_template = """You are a translator"""
 translate_template ="""
-You will translate {summary}  to {language}
-labelled as:  "Summary of the Content in {langauge}"
+You will translate {summary} to {language}
+labelled as:  "Summary of the Content in {language}"
 """
 
 
