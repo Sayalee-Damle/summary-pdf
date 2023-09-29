@@ -54,7 +54,7 @@ async def question_llm(query, db):
     chat_prompt_2 = ChatPromptTemplate.from_messages([system_message_prompt_2, human_message_prompt_2])
     docs = db.similarity_search(query)
     chain2 = LLMChain(llm = Config.llm, prompt = chat_prompt_2)
-    ans =await chain2.arun({"output": docs[0], "question": query})
+    ans = await chain2.arun({"output": docs, "question": query})
     return ans
 
 

@@ -67,3 +67,16 @@ if prompt:= st.chat_input("Type here"):
         # Add assistant response to chat history
         #st.session_state.messages.append({"role": "assistant", "content": response})
 
+
+
+  ask_message = cl.AskFileMessage(
+        content="Please upload a PDF",
+        accept=["application/pdf"]
+    )
+
+    ask_message.send()
+       
+     while path_pdf == None:
+        path_pdf = await cl.AskUserMessage(
+            content=f"enter path of PDF"
+        ).send()
