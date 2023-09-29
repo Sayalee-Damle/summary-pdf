@@ -4,13 +4,14 @@ import extractkeyword as extractk
 import vector_embedding as ve
 from pathlib import Path
 import time
+from config import cfg
 
 def write_to_disc(file: AskFileResponse) -> Path:
     content = file.content
     path = Path(file.path)
-    with open(path, 'wb') as f:
+    with open(cfg.save_pdf_here/f"{path.stem}", 'wb') as f:
         f.write(content)
-    return path
+    return cfg.save_pdf_here/f"{path.stem}"
 
 def is_yes(input_msg: str) -> bool:
     return input_msg in ("yes", "y", "Yes", "Y")

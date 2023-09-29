@@ -1,3 +1,5 @@
 # ignore all .env files
 *.env
-././embeddings
+#ignore all files in this directory
+embeddings/*
+files/*

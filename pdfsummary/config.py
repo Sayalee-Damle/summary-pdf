@@ -24,6 +24,9 @@ class Config:
 
     emb_func = OpenAIEmbeddings()
     split_size = int(os.getenv("CHUNK_SIZE"))
+    save_pdf_here = Path(os.getenv("PDF_PATH_DISC"))
+    if not save_pdf_here.exists():
+        save_pdf_here.mkdir(exist_ok=True, parents=True)
 
 cfg = Config()
 
