@@ -8,7 +8,10 @@ Vector Embedding methods are used
 1. openai
 2. langchain
 3. python-dotenv
-4. chromaDB
+4. FAISS
+5. tiktoken
+6. chainlit
+7. unstructured
 
 # Create project
 ## Installations prerequisites
@@ -20,6 +23,7 @@ Vector Embedding methods are used
 6. pip install faiss-cpu
 7. pip install prompt-toolkit
 8. pip install chainlit
+9. pip install unstructured
 
 ## Steps to create project
 1. conda create -n convert_list python=3.11

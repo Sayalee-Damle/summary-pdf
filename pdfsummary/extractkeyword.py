@@ -9,7 +9,6 @@ from langchain.chains import LLMChain
 from langchain.document_loaders import UnstructuredPDFLoader
 import vector_embedding as ve
 import templates as t
-import user_input
 from pathlib import Path
 from prompt_toolkit import prompt
 
@@ -22,11 +21,13 @@ class CommaSeparatedListOutputParser(BaseOutputParser):
 
 def get_db_pages(path_pdf):
     #path_pdf = user_input.get_path_pdf()
-    db, pages = ve.init_vector_store(path_pdf)
+    db, pages = asyncio.run(ve.init_vector_store(path_pdf))
     return db, pages
-    
+
+
 #to find summary
 async def summary_llm(pages):
+    text = ve.convert_to_text(pages)
     system_message_prompt = SystemMessagePromptTemplate.from_template(t.summary_template)
     human_template = "{text}"
     human_message_prompt = HumanMessagePromptTemplate.from_template(human_template)
@@ -34,7 +35,7 @@ async def summary_llm(pages):
     chat_prompt = ChatPromptTemplate.from_messages([system_message_prompt, human_message_prompt])
 
     chain = LLMChain(llm = Config.llm, prompt = chat_prompt)
-    summary = await chain.arun({'text': pages})
+    summary = await chain.arun({'text': text})
     return summary
 
 async def translation(summary, language):
@@ -53,22 +54,15 @@ async def question_llm(query, db):
     human_message_prompt_2 = HumanMessagePromptTemplate.from_template(t.template2)
     chat_prompt_2 = ChatPromptTemplate.from_messages([system_message_prompt_2, human_message_prompt_2])
     docs = db.similarity_search(query)
+    ve.convert_to_text(docs)
     chain2 = LLMChain(llm = Config.llm, prompt = chat_prompt_2)
     ans = await chain2.arun({"output": docs, "question": query})
     return ans
 
 
-""" f = True
-while f == True:
-    c = input("Do you have any questions? (Y/N): ")
-    #print(c.lower)
-    if c in ("Y", "y"):
-        query = input("Enter question: ")
-        docs = db.similarity_search(query)
-        chain2 = LLMChain(llm = Config.llm, prompt = chat_prompt_2)
-        print(chain2.run({"output": docs[0], "question": query}))
-
-    else:
-        print("Thanks!")
-        f = False
-        break"""
+if __name__ == "__main__":
+    import asyncio
+    path_pdf = Path("C:/Users/Sayalee/Documents/langchain_research_paper.pdf")
+    db, pages = asyncio.run(ve.init_vector_store(path_pdf))
+    print(asyncio.run(summary_llm(pages)))
+    #print(pages)

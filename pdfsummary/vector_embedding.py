@@ -1,15 +1,12 @@
-
-from langchain.document_loaders import UnstructuredPDFLoader, PyPDFLoader, PyPDFium2Loader
- 
-from langchain.embeddings.openai import OpenAIEmbeddings
+from langchain.document_loaders import UnstructuredPDFLoader
 from langchain.text_splitter import CharacterTextSplitter
-from langchain.vectorstores import  FAISS
+from langchain.vectorstores import FAISS
 from pathlib import Path
-import user_input as ui
 from config import cfg
 from typing import Tuple, List
 from langchain.schema import Document
 import pickle
+
 
 # if embedding dir is empty
 async def create_vector_store(doc_to_split) -> FAISS:
@@ -20,36 +17,58 @@ async def create_vector_store(doc_to_split) -> FAISS:
     return db
 
 
-#check if embedding dir exists else create
+# check if embedding dir exists else create
 async def init_vector_store(path_pdf: Path) -> Tuple[FAISS, List[Document]]:
-    #print("in init")
-    file_path = cfg.path_embedding_dir/path_pdf.stem    #create a folder below path_embedding_dir
-    documents_path = cfg.path_embedding_dir/f"{path_pdf.stem}_document"
+    # print("in init")
+    file_path = (
+        cfg.path_embedding_dir / path_pdf.stem
+    )  # create a folder below path_embedding_dir
+    documents_path = cfg.path_embedding_dir / f"{path_pdf.stem}_document"
     print(documents_path)
     if file_path.exists() and len(list(file_path.glob("*"))) > 0:
-        #print("in if")
+        # print("in if")
         db = FAISS.load_local(file_path.as_posix(), cfg.emb_func)
-        with open(documents_path, 'rb') as f:
+        with open(documents_path, "rb") as f:
             documents = pickle.load(f)
             return db, documents
     else:
         # print("in else")
-        loader = UnstructuredPDFLoader(path_pdf)
-        pages = loader.load()
-       # print("Got pages")
+        pages = extract_pages(path_pdf)
+        # print("Got pages")
         db = await create_vector_store(pages)
-        with open(documents_path, 'wb') as f:
+        with open(documents_path, "wb") as f:
             pickle.dump(pages, f)
         if not file_path.exists():
-            file_path.mkdir(parents = True)
+            file_path.mkdir(parents=True)
         db.save_local(file_path.as_posix())
         return db, pages
 
+
+def extract_pages(path_pdf: Path) -> List[Document]:
+    loader = UnstructuredPDFLoader(path_pdf.as_posix())
+    pages = loader.load()
+    return pages
+
+
+def convert_to_file(path_pdf: Path, target_path: Path):
+    docs = extract_pages(path_pdf)
+    with open(target_path, "w", encoding="utf-8") as f:
+        for doc in docs:
+            f.write(doc.page_content)
+            f.write("\n")
+
+
+def convert_to_text(pages: List[Document]) -> str:
+    return "\n".join([page.page_content for page in pages])
+
+
 if __name__ == "__main__":
-    path_pdf = Path("/Users/sayaleedamle/WorkDocumets/samplepdf3.pdf")
-    faiss, documents =  init_vector_store(path_pdf) 
+    import asyncio
+
+    path_pdf = Path("C:/Users/Sayalee/Documents/langchain_research_paper.pdf")
+    convert_to_file(path_pdf, cfg.save_pdf_here / "langchain_research_paper.txt")
+    faiss, documents = asyncio.run(init_vector_store(path_pdf))
     assert faiss is not None
     assert documents is not None
     assert len(documents) > 0
-    print(faiss)
-    
+    print(convert_to_text(documents))
