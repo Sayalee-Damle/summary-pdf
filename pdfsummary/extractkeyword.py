@@ -6,11 +6,9 @@ from langchain.prompts.chat import (
     HumanMessagePromptTemplate,
 )
 from langchain.chains import LLMChain
-from langchain.document_loaders import UnstructuredPDFLoader
 import vector_embedding as ve
 import templates as t
 from pathlib import Path
-from prompt_toolkit import prompt
 
 
 class CommaSeparatedListOutputParser(BaseOutputParser):

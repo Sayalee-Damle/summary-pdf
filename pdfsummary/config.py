@@ -3,7 +3,7 @@ import os
 from langchain.chat_models import ChatOpenAI
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.vectorstores import FAISS
-from pathlib import Path,PurePath
+from pathlib import Path
 
 load_dotenv()
 

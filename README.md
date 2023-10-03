@@ -1,7 +1,7 @@
 # Description
 User interactive PDF reader. 
 You will get a summary and keywords out of the PDF that you put in.
-After you get the summary, you will get a chance to sk questions related to the PDF topic and get a relevant answer for it.
+After you get the summary, you will get a chance to ask questions related to the topic and get a relevant answers for it.
 Vector Embedding methods are used
 
 # Packages used
