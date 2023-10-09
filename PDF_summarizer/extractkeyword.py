@@ -1,14 +1,18 @@
 from langchain.schema import BaseOutputParser
-from config import Config
 from langchain.prompts.chat import (
     ChatPromptTemplate,
     SystemMessagePromptTemplate,
     HumanMessagePromptTemplate,
 )
 from langchain.chains import LLMChain
-import vector_embedding as ve
-import templates as t
 from pathlib import Path
+from typing import List
+from langchain.schema import Document
+from langchain.vectorstores import FAISS
+
+import PDF_summarizer.vector_embedding as ve
+import PDF_summarizer.templates as t
+from PDF_summarizer.config import Config
 
 
 class CommaSeparatedListOutputParser(BaseOutputParser):
@@ -16,7 +20,7 @@ class CommaSeparatedListOutputParser(BaseOutputParser):
         return text.strip().split(", ")
 
 
-def prompt_factory(system_template, human_template):
+def prompt_factory(system_template, human_template) -> ChatPromptTemplate:
     system_message_prompt = SystemMessagePromptTemplate.from_template(
         template=system_template
     )
@@ -28,14 +32,13 @@ def prompt_factory(system_template, human_template):
     return chat_prompt
 
 
-def get_db_pages(path_pdf):
-    # path_pdf = user_input.get_path_pdf()
+def get_db_pages(path_pdf) -> (FAISS, List[Document]):
     db, pages = asyncio.run(ve.init_vector_store(path_pdf))
     return db, pages
 
 
 # to find summary
-async def summary_llm(pages):
+async def summary_llm(pages) -> Document:
     text = ve.convert_to_text(pages)
     chat_prompt = prompt_factory(t.summary_template, "{text}")
     chain = LLMChain(llm=Config.llm, prompt=chat_prompt)
@@ -43,14 +46,11 @@ async def summary_llm(pages):
     return summary
 
 
-async def translation(summary, language):
+async def translation(summary, language) -> Document:
     chat_prompt_3 = prompt_factory(t.system_translate_template, t.translate_template)
     chain3 = LLMChain(llm=Config.llm, prompt=chat_prompt_3)
     translate = await chain3.arun({"summary": summary, "language": language})
     return translate
-
-
-# print(pages[0].page_content)
 
 
 # template for question answer
@@ -65,7 +65,6 @@ async def question_llm(query, db):
 
 if __name__ == "__main__":
     import asyncio
-
     path_pdf = Path("C:/Users/Sayalee/Documents/langchain_research_paper.pdf")
     db, pages = asyncio.run(ve.init_vector_store(path_pdf))
     print(asyncio.run(summary_llm(pages)))

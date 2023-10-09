@@ -2,10 +2,11 @@ from langchain.document_loaders import UnstructuredPDFLoader
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.vectorstores import FAISS
 from pathlib import Path
-from config import cfg
 from typing import Tuple, List
 from langchain.schema import Document
 import pickle
+
+from PDF_summarizer.config import cfg
 
 
 # if embedding dir is empty

@@ -1,11 +1,11 @@
 import chainlit as cl
 from chainlit.types import AskFileResponse
-import extractkeyword as extractk
-import vector_embedding as ve
 from pathlib import Path
-import time
-from config import cfg
+from langchain.schema import Document
 
+from PDF_summarizer.config import cfg
+import PDF_summarizer.extractkeyword as extractk
+import PDF_summarizer.vector_embedding as ve
 
 def write_to_disc(file: AskFileResponse) -> Path:
     content = file.content
@@ -31,7 +31,7 @@ async def start() -> cl.Message:
         return
 
 
-async def get_pdf_path():
+async def get_pdf_path() -> Path:
     files = None
     path_pdf = None
 
@@ -49,11 +49,12 @@ async def get_pdf_path():
     return path_pdf
 
 
-async def process_user_questions(db):
+async def process_user_questions(db) -> cl.Message:
     choiceq = None
     while choiceq == None:
         choiceq = await cl.AskUserMessage(
-            content=f"Do you have any questions about this? (Yes/No)", timeout=cfg.ui_timeout
+            content=f"Do you have any questions about this? (Yes/No)",
+            timeout=cfg.ui_timeout,
         ).send()
 
     if not is_yes(choiceq["content"]):
@@ -75,19 +76,19 @@ async def process_user_questions(db):
             break
 
 
-async def process_translation(summary):
+async def process_translation(summary) -> cl.Message:
     ans = None
     lang = None
     while ans == None:
-        time.sleep(5)
         ans = await cl.AskUserMessage(
-            content=f"Do you want to translate the summary? (Yes/No)", timeout= cfg.ui_timeout
+            content=f"Do you want to translate the summary? (Yes/No)",
+            timeout=cfg.ui_timeout,
         ).send()
 
     if is_yes(ans["content"]):
         while lang == None:
             lang = await cl.AskUserMessage(
-                content=f"Which Language do you want to use to translate the summary?", 
+                content=f"Which Language do you want to use to translate the summary?",
                 timeout=cfg.ui_timeout,
             ).send()
         translation = await extractk.translation(summary, lang["content"])
@@ -99,9 +100,8 @@ async def process_translation(summary):
         await cl.Message(content=f"okay").send()
 
 
-async def process_summary(pages):
+async def process_summary(pages) -> Document:
+    await cl.Message(content=f"The summary will be shown below").send()
     summary = await extractk.summary_llm(pages)
-
-    await cl.Message(content=f"The summary is given below \n{summary}").send()
-
+    await cl.Message(content=f"{summary}").send()
     return summary
