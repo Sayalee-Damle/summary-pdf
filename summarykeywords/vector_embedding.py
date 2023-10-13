@@ -6,7 +6,7 @@ from typing import Tuple, List
 from langchain.schema import Document
 import pickle
 
-from PDF_summarizer.config import cfg
+from summarykeywords.config import cfg
 
 
 # if embedding dir is empty

@@ -1,7 +1,8 @@
-summary_template = """You display keywords and a summary from the {text} provided.
+summary_human_template = """You display keywords and a summary from the {text} provided.
 A user will pass in a pdf file, you should generate 5 keywords and a Complete Summary from it. It should be labelled 'Keywords: ' and 'Summary: ' on two different lines.
 The summary will contain an appropriate title. It should have full Sentences.
 """
+summary_system_template = """You help in summarizing the content"""
 
 system_translate_template = """You are a translator"""
 translate_template ="""

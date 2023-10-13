@@ -3,9 +3,9 @@ from chainlit.types import AskFileResponse
 from pathlib import Path
 from langchain.schema import Document
 
-from PDF_summarizer.config import cfg
-import PDF_summarizer.extractkeyword as extractk
-import PDF_summarizer.vector_embedding as ve
+from summarykeywords.config import cfg
+import summarykeywords.extractkeyword as extractk
+import summarykeywords.vector_embedding as ve
 
 def write_to_disc(file: AskFileResponse) -> Path:
     content = file.content

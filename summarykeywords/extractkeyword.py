@@ -10,9 +10,9 @@ from typing import List
 from langchain.schema import Document
 from langchain.vectorstores import FAISS
 
-import PDF_summarizer.vector_embedding as ve
-import PDF_summarizer.templates as t
-from PDF_summarizer.config import Config
+import summarykeywords.vector_embedding as ve
+import summarykeywords.templates as t
+from summarykeywords.config import Config
 
 
 class CommaSeparatedListOutputParser(BaseOutputParser):
@@ -40,7 +40,7 @@ def get_db_pages(path_pdf) -> (FAISS, List[Document]):
 # to find summary
 async def summary_llm(pages) -> Document:
     text = ve.convert_to_text(pages)
-    chat_prompt = prompt_factory(t.summary_template, "{text}")
+    chat_prompt = prompt_factory(t.summary_system_template, t.summary_human_template)
     chain = LLMChain(llm=Config.llm, prompt=chat_prompt)
     summary = await chain.arun({"text": text})
     return summary
