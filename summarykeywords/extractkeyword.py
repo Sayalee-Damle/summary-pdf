@@ -12,7 +12,7 @@ from langchain.vectorstores import FAISS
 
 import summarykeywords.vector_embedding as ve
 import summarykeywords.templates as t
-from summarykeywords.config import Config
+from summarykeywords.config import cfg
 
 
 class CommaSeparatedListOutputParser(BaseOutputParser):
@@ -41,14 +41,14 @@ def get_db_pages(path_pdf) -> (FAISS, List[Document]):
 async def summary_llm(pages) -> Document:
     text = ve.convert_to_text(pages)
     chat_prompt = prompt_factory(t.summary_system_template, t.summary_human_template)
-    chain = LLMChain(llm=Config.llm, prompt=chat_prompt)
+    chain = LLMChain(llm=cfg.llm, prompt=chat_prompt)
     summary = await chain.arun({"text": text})
     return summary
 
 
 async def translation(summary, language) -> Document:
     chat_prompt_3 = prompt_factory(t.system_translate_template, t.translate_template)
-    chain3 = LLMChain(llm=Config.llm, prompt=chat_prompt_3)
+    chain3 = LLMChain(llm=cfg.llm, prompt=chat_prompt_3)
     translate = await chain3.arun({"summary": summary, "language": language})
     return translate
 
@@ -58,7 +58,7 @@ async def question_llm(query, db):
     chat_prompt_2 = prompt_factory(t.system_template, t.template2)
     docs = db.similarity_search(query)
     ve.convert_to_text(docs)
-    chain2 = LLMChain(llm=Config.llm, prompt=chat_prompt_2)
+    chain2 = LLMChain(llm=cfg.llm, prompt=chat_prompt_2)
     ans = await chain2.arun({"output": docs, "question": query})
     return ans
 
